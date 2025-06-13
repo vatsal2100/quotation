@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quotation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px auto;
+            max-width: 800px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: #f9fafc;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 20px;
+        }
+        .info {
+            text-align: right;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 20px;
+            margin: 0;
+        }
+        .quotation-heading {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .totals {
+            margin-top: 15px;
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+        }
+        .totals td {
+            border: none;
+            padding: 6px 0;
+        }
+        .totals tr:last-child td {
+            font-weight: bold;
+            background: #e0e0e0;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 6px;
+            margin: 4px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        button {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 8px 4px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        #itemsTable tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .notes {
+            margin-top: 15px;
+        }
+        @media print {
+            body {
+                margin: 0.5cm 1cm;
+                padding: 0;
+                font-size: 10pt;
+                line-height: 1.2;
+                background: white;
+            }
+            table {
+                font-size: 9pt;
+                width: 100%;
+            }
+            table, tr, td, th {
+                page-break-inside: avoid;
+                border-collapse: collapse;
+            }
+            .quotation-heading, .header, .totals, .notes {
+                page-break-inside: avoid;
+            }
+            button, .controls, .remove-row, .add-row, input[type="file"] {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1><input type="text" id="businessName" placeholder="Your Business Name"></h1>
+            <textarea id="businessAddress" placeholder="Business Address"></textarea>
+            <input type="text" id="abn" placeholder="ABN">
+        </div>
+        <div class="info">
+            <div class="quotation-heading">QUOTATION</div>
+            <p>Quotation #: <input type="text" id="quoteNumber"><br>
+            Date: <input type="date" id="quoteDate"><br>
+            Valid Until: <input type="date" id="validDate"><br>
+            Work Order #: <input type="text" id="workOrderNumber"></p>
+        </div>
+    </div>
+
+    <div>
+        <h3>Client Information</h3>
+        <input type="text" id="clientName" placeholder="Client Name"><br>
+        <textarea id="clientAddress" placeholder="Client Address"></textarea>
+        <input type="email" id="clientEmail" placeholder="Client Email">
+    </div>
+
+    <table id="itemsTable">
+        <thead>
+            <tr>
+                <th>Item No.</th>
+                <th>Description & Additional Details</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="2">1</td>
+                <td>
+                    <input type="text" class="description" value="" placeholder="Description" style="width:100%;">
+                </td>
+                <td rowspan="2">
+                    <input type="number" class="quantity" min="1" value="1" style="width:60px;">
+                </td>
+                <td rowspan="2">
+                    <input type="number" class="unit-price" step="0.01" value="0.00" style="width:70px;">
+                </td>
+                <td rowspan="2" class="subtotal">$0.00</td>
+                <td rowspan="2">
+                    <button class="remove-row">×</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <textarea class="additional-details" placeholder="Additional Details" style="width:100%;height:50px;"></textarea>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <button class="add-row">Add Item</button>
+
+    <table class="totals">
+        <tr>
+            <td>Subtotal:</td>
+            <td id="subtotal">$0.00</td>
+        </tr>
+        <tr>
+            <td>GST (%): <input type="number" id="taxRate" min="0" max="100" value="10" style="width:50px;"></td>
+            <td id="taxAmount">$0.00</td>
+        </tr>
+        <tr>
+            <td><strong>Total:</strong></td>
+            <td id="totalAmount"><strong>$0.00</strong></td>
+        </tr>
+    </table>
+
+    <div class="notes">
+        <h3>Notes</h3>
+        <textarea id="notes" style="width:100%;height:80px" placeholder="Enter notes here..."></textarea>
+    </div>
+
+    <div class="controls">
+        <button onclick="window.print()">Print</button>
+        <button class="send-email">Send via Email</button>
+    </div>
+
+    <script>
+        // Add dynamic rows
+        const addButton = document.querySelector('.add-row');
+
+        function handleAddItem() {
+            const tbody = document.querySelector('#itemsTable tbody');
+            // Clone the first row (description)
+            const newRow = tbody.querySelector('tr').cloneNode(true);
+            // Clone the second row (additional details)
+            const newDetailsRow = tbody.querySelector('tr + tr').cloneNode(true);
+            // Calculate the new item number
+            const rowNumber = Math.floor(tbody.querySelectorAll('tr').length / 2) + 1;
+
+            // Set item number and clear inputs
+            newRow.querySelector('td').textContent = rowNumber;
+            newRow.querySelector('td').rowSpan = 2;
+            newRow.querySelectorAll('input').forEach(input => input.value = '');
+            newDetailsRow.querySelector('textarea').value = '';
+            newRow.querySelector('.subtotal').textContent = '$0.00';
+
+            // Append both rows
+            tbody.appendChild(newRow);
+            tbody.appendChild(newDetailsRow);
+            addRowEventListeners(newRow, newDetailsRow);
+        }
+
+        // For desktop
+        addButton.addEventListener('click', handleAddItem);
+
+        // For mobile
+        addButton.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            handleAddItem();
+        });
+
+        // Add row event listeners (remove row and input listeners)
+        function addRowEventListeners(descRow, detailsRow) {
+            descRow.querySelector('.remove-row').addEventListener('click', function() {
+                const tbody = document.querySelector('#itemsTable tbody');
+                const rowIndex = Array.from(tbody.querySelectorAll('tr')).indexOf(descRow);
+                // Remove both the description and details rows
+                tbody.removeChild(descRow);
+                tbody.removeChild(detailsRow);
+                // Update item numbers
+                updateItemNumbers();
+                calculateTotals();
+            });
+            descRow.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', calculateTotals);
+            });
+        }
+
+        // Update item numbers after removing a row
+        function updateItemNumbers() {
+            const tbody = document.querySelector('#itemsTable tbody');
+            const rows = tbody.querySelectorAll('tr:nth-child(odd)'); // Only description rows
+            rows.forEach((row, index) => {
+                row.querySelector('td').textContent = index + 1;
+                row.querySelector('td').rowSpan = 2;
+            });
+        }
+
+        // Calculate totals
+        function calculateTotals() {
+            let subtotal = 0;
+            const tbody = document.querySelector('#itemsTable tbody');
+            const descRows = tbody.querySelectorAll('tr:nth-child(odd)'); // Only description rows
+            descRows.forEach(row => {
+                const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+                const unitPrice = parseFloat(row.querySelector('.unit-price').value) || 0;
+                const rowTotal = quantity * unitPrice;
+                row.querySelector('.subtotal').textContent = `$${rowTotal.toFixed(2)}`;
+                subtotal += rowTotal;
+            });
+            
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const taxAmount = subtotal * (taxRate/100);
+            
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('taxAmount').textContent = `$${taxAmount.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = 
+                `$${(subtotal + taxAmount).toFixed(2)}`;
+        }
+
+        // Add event listeners for totals
+        document.getElementById('taxRate').addEventListener('input', calculateTotals);
+
+        // Send via Email (opens mail client with details)
+        document.querySelector('.send-email').addEventListener('click', function() {
+            const email = document.getElementById('clientEmail').value;
+            const subject = `Quotation ${document.getElementById('quoteNumber').value}`;
+            const body = `Dear ${document.getElementById('clientName').value},\n\nPlease find attached your quotation.\n\nKind regards,\n${document.getElementById('businessName').value}`;
+            
+            // Mobile-friendly email handling
+            if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                alert('Please print and save as PDF first, then attach it manually to your email.');
+                window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            } else {
+                alert('Please print and save as PDF first, then attach it manually to your email.');
+                window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            }
+        });
+    </script>
+</body>
+</html>
